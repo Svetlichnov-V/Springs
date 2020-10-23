@@ -331,3 +331,19 @@ void menegerAcceleration(Sphere* spheres, int numberOfSpheres, const float coeff
         controlSphere  (&spheres[i], controllability);
     }
 }
+
+void menegerMovingSpheres(Sphere* spheres, int numberOfSpheres, float dt)
+{
+    for (int i = 0; i < numberOfSpheres; ++i)
+    {
+        moveSphere(&spheres[i], dt);
+    }
+}
+
+void menegerDrawSpheres(Sphere* spheres, int numberOfSpheres, int numberOfCicles, sf::RenderWindow* window)
+{
+    for (int i = 0; i < numberOfSpheres; ++i)
+    {
+        drawSphere(window, &spheres[i], numberOfCicles);
+    }
+}

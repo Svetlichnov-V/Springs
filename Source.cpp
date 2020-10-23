@@ -4,6 +4,16 @@
 #include "Spring.h"
 #include "Vector2f.h"
 
+void handlingEvent(sf::RenderWindow* window)
+{
+    sf::Event event;
+    while (window->pollEvent(event))
+    {
+        if (event.type == sf::Event::Closed)
+            window->close();
+    }
+}
+
 int main()
 {
     const int X_MAX = 1960;
@@ -28,6 +38,7 @@ int main()
     sf::Color colorTrackSphere = fillColor;
 
     const int numberOfSpheres = 3;
+    const int numberOfSprings = 3;
     Sphere spheres[numberOfSpheres];
 
     sf::Clock clock;
@@ -40,14 +51,11 @@ int main()
     spheres[1] = Sphere{ Vector2f(800, 800), Vector2f(200, 400), Vector2f(0, 0) , Vector2f(0, 0), radius, 1, colorSphere, colorTrackSphere };
     spheres[2] = Sphere{ Vector2f(1200, 600), Vector2f(200, 400), Vector2f(0, 0) , Vector2f(0, 0), radius, 1, colorSphere, colorTrackSphere };
 
-    Spring springs[numberOfSpheres][numberOfSpheres];
+    Spring springs[numberOfSprings];
 
-    springs[0][0] = Spring{ 0, 0, sf::Color::Blue };
-    springs[2][2] = Spring{ 0, 0, sf::Color::Blue };
-    springs[1][1] = Spring{ 0, 0, sf::Color::Blue };
-    springs[0][1] = springs[1][0] = Spring{ 0.1,  200 , sf::Color::Blue };
-    springs[0][2] = springs[2][0] = Spring{ 0.2,  400 , sf::Color::Blue };
-    springs[1][2] = springs[2][1] = Spring{ 0.05, 800 , sf::Color::Blue };
+    springs[0] = Spring{ 0.01, 400, sf::Color::Blue, 0, 1 };
+    springs[1] = Spring{ 0.05, 600, sf::Color::Blue, 2, 1 };
+    springs[2] = Spring{ 0.01, 800, sf::Color::Blue, 0, 2 };
 
     /*
     for (int i = 0; i < numberOfSpheres; ++i)
@@ -114,33 +122,14 @@ int main()
         std::cout << "/n";
 
         menegerAcceleration(spheres, numberOfSpheres, coefficientSlowdown);
+        managerInfluenceSpringsToSpheres(spheres, springs, numberOfSpheres, numberOfSprings);
+        menegerMovingSpheres(spheres, numberOfSpheres, dt);
 
-        managerInfluenceSpringsToSpheres(spheres, &(springs[0][0]), numberOfSpheres);
- /*
-        for (int i = 0; i < numberOfSpheres; ++i)
-            for (int j = 0; j < i; ++j)
-                acceleratóDueToSpring(&spheres[i], &spheres[j], &springs[i][j]); */
-
-        for (int i = 0; i < numberOfSpheres; ++i)
-        {
-            moveSphere(&spheres[i], dt);
-        }
-
-        sf::Event event;
-        while (window.pollEvent(event))
-        {
-            if (event.type == sf::Event::Closed)
-                window.close();
-        }
+        handlingEvent(&window);
 
         window.clear(fillColor);
-        for (int i = 0; i < numberOfSpheres; ++i)
-            for (int j = 0; j < i; ++j)
-                drawSpring(spheres[i].position, spheres[j].position, &window);
-        for (int i = 0; i < numberOfSpheres; ++i)
-        {
-            drawSphere(&window, &spheres[i], numberOfCicles);
-        }
+        managerDrawSprings(springs, spheres, numberOfSprings, numberOfSpheres, &window);
+        menegerDrawSpheres(spheres, numberOfSpheres, numberOfCicles, &window);
         window.display();
     }
 
