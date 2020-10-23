@@ -1,0 +1,1 @@
+Lib SFML for Visual Studio 2017 32 bit
