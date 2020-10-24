@@ -117,9 +117,9 @@ int main()
     {
         time1 = clock.getElapsedTime().asSeconds();
         dt = time1 - time2;
-        std::cout << 1.0 / (time1 - time2);
+        //std::cout << 1.0 / (time1 - time2);
         time2 = time1;
-        std::cout << "/n";
+        //std::cout << "/n";
 
         menegerAcceleration(spheres, numberOfSpheres, coefficientSlowdown);
         managerInfluenceSpringsToSpheres(spheres, springs, numberOfSpheres, numberOfSprings);
