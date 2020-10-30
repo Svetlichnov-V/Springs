@@ -1,4 +1,4 @@
-#pragma once
+ο»Ώ#pragma once
 #include "SFML/Graphics.hpp"
 #include <iostream>
 #include <math.h>
@@ -24,16 +24,13 @@ void managerCreatingSpheres(Sphere* spheres, const int numberOfSpheres, int X_MA
             Vector2f position(rand() % X_MAX, rand() % Y_MAX);
             Vector2f velocity{ rand() % 200, rand() % 200 };
             Sphere sphere{ position,     position,     velocity,     Vector2f(0, 0), radius, SPHERE_MASS, colorSphere, colorTrackSphere };
-
             bool flag = true;
-
             for (int j = 0; j < i; ++j)
             {
                 int commonRadius = (sphere.radius) + (spheres[j].radius);
                 float dx = (sphere.position.x) - (spheres[j].position.x);
                 float dy = (sphere.position.y) - (spheres[j].position.y);
                 float distance = pow(dx * dx + dy * dy, 0.5);
-
                 flag = distance > commonRadius;
                 if (!flag)
                 {
@@ -49,9 +46,9 @@ void managerCreatingSpheres(Sphere* spheres, const int numberOfSpheres, int X_MA
 
 struct Sphere
 {
-    Vector2f position     = Vector2f(0, 0);
-    Vector2f oldPosition  = Vector2f(0, 0);
-    Vector2f velocity     = Vector2f(0, 0);
+    Vector2f position = Vector2f(0, 0);
+    Vector2f oldPosition = Vector2f(0, 0);
+    Vector2f velocity = Vector2f(0, 0);
     Vector2f acceleration = Vector2f(0, 0);
     int radius;
     float MASS;
@@ -121,11 +118,13 @@ void moveSphere(Sphere* sphere, const float DT)
 {
     assert(sphere != 0);
 
-    sphere->position.x += sphere->velocity.x * DT + 0.5 * sphere->acceleration.x * DT * DT;
-    sphere->position.y += sphere->velocity.y * DT + 0.5 * sphere->acceleration.y * DT * DT;
+    sphere->position += sphere->velocity * DT + 0.5 * sphere->acceleration * DT * DT;
+    //sphere->position.x += sphere->velocity.x * DT + 0.5 * sphere->acceleration.x * DT * DT;
+    //sphere->position.y += sphere->velocity.y * DT + 0.5 * sphere->acceleration.y * DT * DT;
 
-    sphere->velocity.x += sphere->acceleration.x * DT;
-    sphere->velocity.y += sphere->acceleration.y * DT;
+    sphere->velocity += sphere->acceleration * DT;
+    //sphere->velocity.x += sphere->acceleration.x * DT;
+    //sphere->velocity.y += sphere->acceleration.y * DT;
 }
 
 void collisionSphere(Sphere* sphere, const int X_MAX, const int Y_MAX)
@@ -162,14 +161,17 @@ bool isCollidedTwoSpheres(Sphere* sphere1, Sphere* sphere2)
     int commonRadius = (sphere1->radius) + (sphere2->radius);
     int commonRadiusSquared = commonRadius * commonRadius;
 
-    float dx = (sphere1->position.x) - (sphere2->position.x);
-    float dy = (sphere1->position.y) - (sphere2->position.y);
+    //float dx = (sphere1->position.x) - (sphere2->position.x);
+    //float dy = (sphere1->position.y) - (sphere2->position.y);
 
-    float distanceSquared = dx * dx + dy * dy;
+    Vector2f dp = sphere1->position - sphere2->position;
+
+    float distanceSquared = dp.mod();
 
     return (distanceSquared < commonRadiusSquared);
 }
 
+/*
 float projectionVector(float xVector, float yVector, float xAxis, float yAxis)
 {
     float scalarComposition = xVector * xAxis + yVector * yAxis;
@@ -180,6 +182,7 @@ float projectionVector(float xVector, float yVector, float xAxis, float yAxis)
     float pV = scalarComposition / moduleAxis;
     return pV;
 }
+*/
 
 float reducedMass(const float m1, const float m2)
 {
@@ -189,10 +192,12 @@ float reducedMass(const float m1, const float m2)
     return rm;
 }
 
+/*
 float moduleVector(float x, float y)
 {
     return pow(x * x + y * y, 0.5);
 }
+*/
 
 void resolutionSphereOnCollision(Sphere* sphere1, Sphere* sphere2)
 {
@@ -200,15 +205,17 @@ void resolutionSphereOnCollision(Sphere* sphere1, Sphere* sphere2)
     assert(sphere2 != 0);
     assert(sphere1->MASS != 0 && sphere2->MASS != 0);
 
-    float xAxis = sphere1->position.x - sphere2->position.x;
-    float yAxis = sphere1->position.y - sphere2->position.y;
-    float moduleAxis = pow(xAxis * xAxis + yAxis * yAxis, 0.5);
+    //float xAxis = sphere1->position.x - sphere2->position.x;
+    //float yAxis = sphere1->position.y - sphere2->position.y;
+
+    Vector2f axis = sphere1->position - sphere2->position;
+    float moduleAxis = axis.mod();
 
     if (moduleAxis == 0)
         assert(false);
 
-    float projectionVectorOnSpeedSphere1 = projectionVector(sphere1->velocity.x, sphere1->velocity.y, xAxis, yAxis);
-    float projectionVectorOnSpeedSphere2 = projectionVector(sphere2->velocity.x, sphere2->velocity.y, xAxis, yAxis);
+    float projectionVectorOnSpeedSphere1 = sphere1->velocity.projection(axis);
+    float projectionVectorOnSpeedSphere2 = sphere2->velocity.projection(axis);
 
     float reducedMassSpheres = reducedMass(sphere1->MASS, sphere2->MASS);
 
@@ -217,10 +224,10 @@ void resolutionSphereOnCollision(Sphere* sphere1, Sphere* sphere2)
 
     int commonRadius = (sphere1->radius) + (sphere2->radius);
 
-    float dx = (sphere1->position.x) - (sphere2->position.x);
-    float dy = (sphere1->position.y) - (sphere2->position.y);
+    //float dx = (sphere1->position.x) - (sphere2->position.x);
+    //float dy = (sphere1->position.y) - (sphere2->position.y);
 
-    float distance = pow(dx * dx + dy * dy, 0.5);
+    float distance = (sphere1->position - sphere2->position).mod();
 
     /*
     float dr = commonRadius - distance;
@@ -240,8 +247,10 @@ void resolutionSphereOnCollision(Sphere* sphere1, Sphere* sphere2)
         //sphere1->position.x -= sphere1->velocity.x * dt;
         //sphere1->position.y -= sphere1->velocity.y * dt;
 
-        sphere1->velocity.x += -2 * dv1 * xAxis / moduleAxis;
-        sphere1->velocity.y += -2 * dv1 * yAxis / moduleAxis;
+        sphere1->velocity -= 2 * dv1 * axis.norm();
+
+        //sphere1->velocity.x += -2 * dv1 * xAxis / moduleAxis;
+        //sphere1->velocity.y += -2 * dv1 * yAxis / moduleAxis;
 
         //sphere1->position.x += sphere1->velocity.x * dt;
         //sphere1->position.y += sphere1->velocity.y * dt;
@@ -252,8 +261,10 @@ void resolutionSphereOnCollision(Sphere* sphere1, Sphere* sphere2)
         //sphere2->position.x -= sphere1->velocity.x * dt;
         //sphere2->position.y -= sphere1->velocity.y * dt;
 
-        sphere2->velocity.x += 2 * dv2 * xAxis / moduleAxis;
-        sphere2->velocity.y += 2 * dv2 * yAxis / moduleAxis;
+        sphere2->velocity -= 2 * dv2 * axis.norm();
+
+        //sphere2->velocity.x += 2 * dv2 * xAxis / moduleAxis;
+        //sphere2->velocity.y += 2 * dv2 * yAxis / moduleAxis;
 
         //sphere1->position.x += sphere1->velocity.x * dt;
         //sphere1->position.y += sphere1->velocity.y * dt;
@@ -298,8 +309,10 @@ void slowdownSphere(Sphere* sphere, const float coefficientSlowdown)
     if (sphere == 0)
         assert(false);
 
-    sphere->acceleration.x += -sphere->velocity.x * coefficientSlowdown;
-    sphere->acceleration.y += -sphere->velocity.y * coefficientSlowdown;
+    sphere->acceleration -= sphere->velocity * coefficientSlowdown;
+
+    //sphere->acceleration.x += -sphere->velocity.x * coefficientSlowdown;
+    //sphere->acceleration.y += -sphere->velocity.y * coefficientSlowdown;
 }
 
 void controlSphere(Sphere* sphere, const float controllability)
@@ -309,26 +322,46 @@ void controlSphere(Sphere* sphere, const float controllability)
 
     if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
     {
-        sf::Vector2i position = sf::Mouse::getPosition();
+        Vector2f mousePosition (sf::Mouse::getPosition());
 
-        float differnceMouseXAndX1 = position.x - sphere->position.x;
-        float differnceMouseYAndY1 = position.y - sphere->position.y;
-        float modeleDiffernceMouseAndSphere1 = moduleVector(differnceMouseXAndX1, differnceMouseYAndY1);
+        //float differnceMouseXAndX1 = position.x - sphere->position.x;
+        //float differnceMouseYAndY1 = position.y - sphere->position.y;
+        //float modeleDiffernceMouseAndSphere1 = moduleVector(differnceMouseXAndX1, differnceMouseYAndY1);
 
-        sphere->acceleration.x += controllability * differnceMouseXAndX1 / modeleDiffernceMouseAndSphere1;
-        sphere->acceleration.y += controllability * differnceMouseYAndY1 / modeleDiffernceMouseAndSphere1;
+        Vector2f difPositionSphereAndMouse = mousePosition - sphere->position;
+
+        //sphere->acceleration.x += controllability * differnceMouseXAndX1 / modeleDiffernceMouseAndSphere1;
+        //sphere->acceleration.y += controllability * differnceMouseYAndY1 / modeleDiffernceMouseAndSphere1;
+
+        sphere->acceleration += controllability * difPositionSphereAndMouse.norm();
     }
 }
 
-//Μενεδζεπϋ
+//ΓΓ¥Γ­Γ¥Γ¤Γ¦Γ¥Γ°Γ»
 
-void menegerAcceleration(Sphere* spheres, int numberOfSpheres, const float coefficientSlowdown = 0 , const float controllability = 0)
+void menegerOfColisionOnSpheres(Sphere* spheres, int numberOfSpheres, const int X_MAX, const int Y_MAX)
+{
+    for (int i = 0; i < numberOfSpheres; ++i)
+    {
+        collisionSphere(&spheres[i], X_MAX, Y_MAX);
+    }
+    for (int i = 0; i < numberOfSpheres; ++i)
+    {
+        for (int j = i + 1; j < numberOfSpheres; ++j)
+        {
+            if (isCollidedTwoSpheres(&spheres[i], &spheres[j]))
+                resolutionSphereOnCollision(&spheres[i], &spheres[j]);
+        }
+    }
+}
+
+void menegerAcceleration(Sphere* spheres, int numberOfSpheres, const float coefficientSlowdown = 0, const float controllability = 0)
 {
     for (int i = 0; i < numberOfSpheres; ++i)
     {
         nullAccelSphere(&spheres[i]);
-        slowdownSphere (&spheres[i], coefficientSlowdown);
-        controlSphere  (&spheres[i], controllability);
+        slowdownSphere(&spheres[i], coefficientSlowdown);
+        controlSphere(&spheres[i], controllability);
     }
 }
 

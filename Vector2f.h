@@ -19,6 +19,18 @@ struct Vector2f
         this->y = y;
     };
 
+    Vector2f(sf::Vector2f vector)
+    {
+        this->x = vector.x;
+        this->y = vector.y;
+    };
+
+    Vector2f(sf::Vector2i vector)
+    {
+        this->x = vector.x;
+        this->y = vector.y;
+    };
+
     Vector2f operator + (Vector2f v)
     {
         return Vector2f(x + v.x, y + v.y);

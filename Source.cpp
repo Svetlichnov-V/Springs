@@ -51,6 +51,8 @@ int main()
     spheres[1] = Sphere{ Vector2f(800, 800), Vector2f(200, 400), Vector2f(0, 0) , Vector2f(0, 0), radius, 1, colorSphere, colorTrackSphere };
     spheres[2] = Sphere{ Vector2f(1200, 600), Vector2f(200, 400), Vector2f(0, 0) , Vector2f(0, 0), radius, 1, colorSphere, colorTrackSphere };
 
+    //managerCreatingSpheres(spheres, numberOfSpheres, X_MAX, Y_MAX, radius, SPHERE_MASS, colorSphere, colorTrackSphere, time);
+
     Spring springs[numberOfSprings];
 
     springs[0] = Spring{ 0.01, 400, sf::Color::Blue, 0, 1 };
