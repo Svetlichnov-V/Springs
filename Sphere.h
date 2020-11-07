@@ -66,14 +66,6 @@ void nullAccelSphere(Sphere* sphere)
     sphere->acceleration = Vector2f{ 0,0 };
 }
 
-void menegerAcceleration(Sphere* spheres, int numberOfSpheres)
-{
-    for (int i = 0; i < numberOfSpheres; ++i)
-    {
-        nullAccelSphere(&spheres[i]);
-    }
-}
-
 void moveSphere(Sphere* sphere, const float DT)
 {
     assert(sphere != 0);
@@ -226,7 +218,7 @@ void controlSphere(Sphere* sphere, const float controllability)
 
 //Ìåíåäæåðû
 
-void menegerOfColisionOnSpheres(Sphere* spheres, int numberOfSpheres, const int X_MAX, const int Y_MAX)
+void managerOfColisionOnSpheres(Sphere* spheres, int numberOfSpheres, const int X_MAX, const int Y_MAX)
 {
     for (int i = 0; i < numberOfSpheres; ++i)
     {
@@ -242,7 +234,7 @@ void menegerOfColisionOnSpheres(Sphere* spheres, int numberOfSpheres, const int 
     }
 }
 
-void menegerAcceleration(Sphere* spheres, int numberOfSpheres, const float coefficientSlowdown = 0, const float controllability = 0)
+void managerAcceleration(Sphere* spheres, int numberOfSpheres, const float coefficientSlowdown = 0, const float controllability = 0)
 {
     for (int i = 0; i < numberOfSpheres; ++i)
     {
@@ -252,7 +244,7 @@ void menegerAcceleration(Sphere* spheres, int numberOfSpheres, const float coeff
     }
 }
 
-void menegerMovingSpheres(Sphere* spheres, int numberOfSpheres, float dt)
+void managerMovingSpheres(Sphere* spheres, int numberOfSpheres, float dt)
 {
     for (int i = 0; i < numberOfSpheres; ++i)
     {
@@ -260,7 +252,7 @@ void menegerMovingSpheres(Sphere* spheres, int numberOfSpheres, float dt)
     }
 }
 
-void menegerDrawSpheres(Sphere* spheres, int numberOfSpheres, int numberOfCicles, sf::RenderWindow* window)
+void managerDrawSpheres(Sphere* spheres, int numberOfSpheres, int numberOfCicles, sf::RenderWindow* window)
 {
     for (int i = 0; i < numberOfSpheres; ++i)
     {

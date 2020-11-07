@@ -66,10 +66,13 @@ struct Vector2f
 
     Vector2f operator / (float v)
     {
+        assert(v);
         return Vector2f(x / v, y / v);
     }
     Vector2f& operator /= (float v)
     {
+        assert(v);
+
         x /= v;
         y /= v;
         return *this;
